@@ -30,7 +30,11 @@ import {
   AlertCircle,
   Plus,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  Circle,
+  CheckCircle,
+  Send,
+  FolderOpen
 } from 'lucide-react'
 
 // Agent IDs
@@ -41,7 +45,7 @@ const AGENTS = {
   CHAT: '69858c892237a2c55706b069'
 }
 
-// Types based on actual response structures
+// Types
 interface SummaryResult {
   goals: string[]
   requirements: string[]
@@ -81,11 +85,11 @@ interface ChatResult {
 
 type Theme = 'light' | 'dark' | 'forest' | 'paper' | 'neo' | 'fun'
 type GamificationMode = 'forest' | 'build' | 'companion' | 'streak'
-type Screen = 'landing' | 'upload' | 'dashboard'
+type View = 'welcome' | 'upload' | 'dashboard'
 
 export default function Home() {
   // Core state
-  const [screen, setScreen] = useState<Screen>('landing')
+  const [view, setView] = useState<View>('welcome')
   const [theme, setTheme] = useState<Theme>('light')
   const [gamificationMode, setGamificationMode] = useState<GamificationMode>('forest')
 
@@ -98,6 +102,7 @@ export default function Home() {
   const [uploadMode, setUploadMode] = useState<'file' | 'text'>('file')
   const [textInput, setTextInput] = useState('')
   const [isDragging, setIsDragging] = useState(false)
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 
   // Loading states
   const [loadingSummary, setLoadingSummary] = useState(false)
@@ -123,10 +128,32 @@ export default function Home() {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
+  // Load state from localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('klaris-theme') as Theme | null
+    const savedMode = localStorage.getItem('klaris-gamification') as GamificationMode | null
+    const savedProgress = localStorage.getItem('klaris-progress')
+
+    if (savedTheme) setTheme(savedTheme)
+    if (savedMode) setGamificationMode(savedMode)
+    if (savedProgress) setGamificationProgress(parseInt(savedProgress))
+  }, [])
+
   // Apply theme
   useEffect(() => {
     document.documentElement.className = theme
+    localStorage.setItem('klaris-theme', theme)
   }, [theme])
+
+  // Save gamification mode
+  useEffect(() => {
+    localStorage.setItem('klaris-gamification', gamificationMode)
+  }, [gamificationMode])
+
+  // Save progress
+  useEffect(() => {
+    localStorage.setItem('klaris-progress', gamificationProgress.toString())
+  }, [gamificationProgress])
 
   // Focus timer
   useEffect(() => {
@@ -135,7 +162,7 @@ export default function Home() {
         setFocusTimeLeft(prev => {
           if (prev <= 1) {
             setFocusActive(false)
-            setGamificationProgress(prev => Math.min(prev + 10, 100))
+            setGamificationProgress(p => Math.min(p + 10, 100))
             return 0
           }
           return prev - 1
@@ -154,11 +181,13 @@ export default function Home() {
   const handleFileSelect = async (files: FileList | null) => {
     if (!files || files.length === 0) return
 
+    const fileArray = Array.from(files)
+    setSelectedFiles(fileArray)
     setLoadingSummary(true)
+
     try {
-      const uploadResult = await uploadFiles(Array.from(files))
+      const uploadResult = await uploadFiles(fileArray)
       if (uploadResult.success && uploadResult.asset_ids.length > 0) {
-        // Call summary agent with uploaded file
         const result = await callAIAgent(
           'Extract goals, requirements, and deadlines from this document',
           AGENTS.SUMMARY,
@@ -167,13 +196,14 @@ export default function Home() {
 
         if (result.success && result.response.status === 'success') {
           setSummary(result.response.result as SummaryResult)
-          setScreen('dashboard')
+          setView('dashboard')
         }
       }
     } catch (error) {
       console.error('Upload error:', error)
     } finally {
       setLoadingSummary(false)
+      setSelectedFiles([])
     }
   }
 
@@ -186,7 +216,7 @@ export default function Home() {
 
       if (result.success && result.response.status === 'success') {
         setSummary(result.response.result as SummaryResult)
-        setScreen('dashboard')
+        setView('dashboard')
       }
     } catch (error) {
       console.error('Summary error:', error)
@@ -281,6 +311,14 @@ export default function Home() {
     }))
   }
 
+  const handleNewProject = () => {
+    setSummary(null)
+    setTasks([])
+    setTimeline([])
+    setTextInput('')
+    setView('upload')
+  }
+
   const startFocusSession = () => {
     setFocusTimeLeft(focusMinutes * 60)
     setFocusActive(true)
@@ -301,46 +339,75 @@ export default function Home() {
     return `${mins}:${secs.toString().padStart(2, '0')}`
   }
 
-  // Landing Screen
-  if (screen === 'landing') {
+  const getGamificationIcon = () => {
+    switch (gamificationMode) {
+      case 'forest': return <Trees className="h-4 w-4 text-green-600" />
+      case 'build': return <Blocks className="h-4 w-4 text-blue-600" />
+      case 'companion': return <Cat className="h-4 w-4 text-purple-600" />
+      case 'streak': return <Zap className="h-4 w-4 text-yellow-600" />
+    }
+  }
+
+  const getGamificationLabel = () => {
+    switch (gamificationMode) {
+      case 'forest': return 'Growing Forest'
+      case 'build': return 'Building World'
+      case 'companion': return 'Companion Growth'
+      case 'streak': return 'Streak Meter'
+    }
+  }
+
+  // Welcome Screen
+  if (view === 'welcome') {
     return (
-      <div className="min-h-screen bg-background transition-colors duration-200">
-        <div className="flex items-center justify-center min-h-screen p-8">
-          <div className="text-center space-y-8 animate-fade-in">
-            <div className="space-y-4">
-              <h1 className="text-6xl font-bold text-foreground">KLARIS</h1>
-              <p className="text-2xl text-muted-foreground">Your Curriculum, Clarified</p>
+      <div className="min-h-screen bg-background flex items-center justify-center p-8 transition-colors duration-200">
+        <div className="text-center space-y-8 max-w-2xl animate-fade-in">
+          <div className="space-y-4">
+            <div className="inline-block p-4 bg-primary/10 rounded-2xl mb-4">
+              <Target className="h-16 w-16 text-primary" />
             </div>
-            <Button
-              size="lg"
-              onClick={() => setScreen('upload')}
-              className="text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-            >
-              Get Started
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </Button>
+            <h1 className="text-6xl font-bold text-foreground tracking-tight">KLARIS</h1>
+            <p className="text-2xl text-muted-foreground font-light">Your Curriculum, Clarified</p>
+            <p className="text-base text-muted-foreground max-w-md mx-auto mt-4">
+              Transform messy notes into actionable plans with AI-powered summaries, task breakdowns, and timelines.
+            </p>
           </div>
+          <Button
+            size="lg"
+            onClick={() => setView('upload')}
+            className="text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
+          >
+            Get Started
+            <ChevronRight className="ml-2 h-5 w-5" />
+          </Button>
         </div>
       </div>
     )
   }
 
   // Upload Screen
-  if (screen === 'upload') {
+  if (view === 'upload') {
     return (
       <div className="min-h-screen bg-background transition-colors duration-200">
         <div className="flex items-center justify-center min-h-screen p-8">
-          <Card className="w-full max-w-2xl shadow-2xl">
+          <Card className="w-full max-w-2xl shadow-2xl animate-fade-in">
             <CardHeader>
-              <CardTitle className="text-3xl">Upload Your Curriculum</CardTitle>
-              <CardDescription>Upload files or paste your notes to get started</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-3xl">Upload Your Notes</CardTitle>
+                  <CardDescription className="mt-2">Upload files or paste text to get started</CardDescription>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setView('welcome')}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex gap-2 mb-4">
                 <Button
                   variant={uploadMode === 'file' ? 'default' : 'outline'}
                   onClick={() => setUploadMode('file')}
-                  className="flex-1"
+                  className="flex-1 transition-all duration-150"
                 >
                   <Upload className="mr-2 h-4 w-4" />
                   Upload File
@@ -348,7 +415,7 @@ export default function Home() {
                 <Button
                   variant={uploadMode === 'text' ? 'default' : 'outline'}
                   onClick={() => setUploadMode('text')}
-                  className="flex-1"
+                  className="flex-1 transition-all duration-150"
                 >
                   <FileText className="mr-2 h-4 w-4" />
                   Paste Text
@@ -356,34 +423,56 @@ export default function Home() {
               </div>
 
               {uploadMode === 'file' ? (
-                <div
-                  className={`border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200 ${
-                    isDragging
-                      ? 'border-primary bg-primary/5 scale-105'
-                      : 'border-muted-foreground/25 hover:border-primary/50'
-                  }`}
-                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={(e) => {
-                    e.preventDefault()
-                    setIsDragging(false)
-                    handleFileSelect(e.dataTransfer.files)
-                  }}
-                  onClick={() => fileInputRef.current?.click()}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-                  <p className="text-lg font-medium mb-2">Drop files here or click to browse</p>
-                  <p className="text-sm text-muted-foreground">PDF, DOCX, TXT, or images</p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    className="hidden"
-                    multiple
-                    accept=".pdf,.docx,.txt,.png,.jpg,.jpeg"
-                    onChange={(e) => handleFileSelect(e.target.files)}
-                  />
+                <div>
+                  <div
+                    className={`border-2 border-dashed rounded-xl p-12 text-center transition-all duration-200 cursor-pointer ${
+                      isDragging
+                        ? 'border-primary bg-primary/5 scale-[1.02]'
+                        : 'border-muted-foreground/25 hover:border-primary/50 hover:bg-accent/5'
+                    }`}
+                    onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      setIsDragging(false)
+                      handleFileSelect(e.dataTransfer.files)
+                    }}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {selectedFiles.length > 0 ? (
+                      <div className="space-y-2">
+                        <FolderOpen className="mx-auto h-12 w-12 text-primary" />
+                        <p className="text-lg font-medium">{selectedFiles.length} file(s) selected</p>
+                        <p className="text-sm text-muted-foreground">
+                          {selectedFiles.map(f => f.name).join(', ')}
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+                        <p className="text-lg font-medium mb-2">Drop files here or click to browse</p>
+                        <p className="text-sm text-muted-foreground">PDF, DOCX, TXT, or images</p>
+                      </>
+                    )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      className="hidden"
+                      multiple
+                      accept=".pdf,.docx,.txt,.png,.jpg,.jpeg"
+                      onChange={(e) => handleFileSelect(e.target.files)}
+                    />
+                  </div>
+                  {selectedFiles.length > 0 && !loadingSummary && (
+                    <Button
+                      onClick={() => handleFileSelect(new DataTransfer().files)}
+                      className="w-full mt-4"
+                      size="lg"
+                    >
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Generate Summary
+                    </Button>
+                  )}
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -391,12 +480,12 @@ export default function Home() {
                     placeholder="Paste your curriculum notes, project requirements, or study materials here..."
                     value={textInput}
                     onChange={(e) => setTextInput(e.target.value)}
-                    className="min-h-[300px] text-base"
+                    className="min-h-[300px] text-base resize-none"
                   />
                   <Button
                     onClick={handleTextSubmit}
                     disabled={!textInput.trim() || loadingSummary}
-                    className="w-full"
+                    className="w-full transition-all duration-150 hover:scale-[1.02] active:scale-98"
                     size="lg"
                   >
                     {loadingSummary ? (
@@ -415,10 +504,16 @@ export default function Home() {
               )}
 
               {loadingSummary && (
-                <div className="space-y-3 animate-pulse">
-                  <div className="h-4 bg-muted rounded w-3/4"></div>
-                  <div className="h-4 bg-muted rounded w-1/2"></div>
-                  <div className="h-4 bg-muted rounded w-5/6"></div>
+                <div className="space-y-3 p-6 bg-accent/30 rounded-lg">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                    <p className="font-medium">Analyzing your content...</p>
+                  </div>
+                  <div className="space-y-3 animate-pulse">
+                    <div className="h-3 bg-muted rounded w-3/4"></div>
+                    <div className="h-3 bg-muted rounded w-1/2"></div>
+                    <div className="h-3 bg-muted rounded w-5/6"></div>
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -428,312 +523,348 @@ export default function Home() {
     )
   }
 
-  // Dashboard Screen
+  // Dashboard View
   return (
     <div className="min-h-screen bg-background transition-colors duration-200">
-      {/* Sidebar */}
-      <aside className="fixed left-0 top-0 h-screen w-64 bg-sidebar-background border-r border-sidebar-border p-6 flex flex-col">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold text-sidebar-primary">KLARIS</h1>
-          <p className="text-sm text-sidebar-foreground mt-1">Your Curriculum, Clarified</p>
-        </div>
-
-        <Button
-          className="mb-6 w-full"
-          onClick={() => {
-            setScreen('upload')
-            setSummary(null)
-            setTasks([])
-            setTimeline([])
-          }}
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          New Project
-        </Button>
-
-        <div className="flex-1 overflow-y-auto">
-          {summary && (
-            <div className="space-y-2">
-              <div className="px-3 py-2 bg-sidebar-accent rounded-lg">
-                <p className="text-sm font-medium text-sidebar-accent-foreground">Current Project</p>
-                <p className="text-xs text-sidebar-foreground mt-1 line-clamp-2">
-                  {summary.rawNotes.slice(0, 50)}...
-                </p>
+      <div className="grid grid-cols-[260px_1fr]">
+        {/* Sidebar */}
+        <aside className="fixed left-0 top-0 h-screen w-[260px] bg-sidebar-background border-r border-sidebar-border p-6 flex flex-col">
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-2 bg-sidebar-primary/10 rounded-lg">
+                <Target className="h-5 w-5 text-sidebar-primary" />
               </div>
+              <h1 className="text-xl font-bold text-sidebar-primary">KLARIS</h1>
             </div>
-          )}
-        </div>
-
-        <div className="space-y-3 pt-6 border-t border-sidebar-border">
-          {/* Gamification Progress */}
-          <div className="px-3 py-3 bg-sidebar-accent/50 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-sidebar-foreground">Progress</span>
-              <span className="text-xs text-sidebar-foreground">{gamificationProgress}%</span>
-            </div>
-            <div className="h-2 bg-sidebar-background rounded-full overflow-hidden">
-              <div
-                className="h-full bg-sidebar-primary transition-all duration-500"
-                style={{ width: `${gamificationProgress}%` }}
-              />
-            </div>
-            <div className="flex items-center gap-2 mt-2">
-              {gamificationMode === 'forest' && <Trees className="h-4 w-4 text-green-600" />}
-              {gamificationMode === 'build' && <Blocks className="h-4 w-4 text-blue-600" />}
-              {gamificationMode === 'companion' && <Cat className="h-4 w-4 text-purple-600" />}
-              {gamificationMode === 'streak' && <Zap className="h-4 w-4 text-yellow-600" />}
-              <span className="text-xs text-sidebar-foreground">
-                {gamificationMode === 'forest' && 'Growing Forest'}
-                {gamificationMode === 'build' && 'Building World'}
-                {gamificationMode === 'companion' && 'Companion Growth'}
-                {gamificationMode === 'streak' && 'Streak Meter'}
-              </span>
-            </div>
+            <p className="text-xs text-sidebar-foreground">Your Curriculum, Clarified</p>
           </div>
 
           <Button
-            variant="ghost"
-            className="w-full justify-start"
-            onClick={() => setShowSettings(true)}
+            className="mb-6 w-full transition-all duration-150 hover:scale-[1.02] active:scale-98"
+            onClick={handleNewProject}
           >
-            <Settings className="mr-2 h-4 w-4" />
-            Settings
+            <Plus className="mr-2 h-4 w-4" />
+            New Project
           </Button>
 
-          <Button
-            variant="ghost"
-            className="w-full justify-start"
-            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          >
-            {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-            {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
-          </Button>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="ml-64 p-8">
-        <div className="max-w-7xl mx-auto space-y-8">
-          {/* Summary Card */}
-          {summary && (
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5" />
-                  Summary
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <h3 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4" />
-                    Goals
-                  </h3>
-                  <ul className="space-y-2">
-                    {summary.goals.map((goal, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="text-primary mt-1">•</span>
-                        <span className="text-sm">{goal}</span>
-                      </li>
-                    ))}
-                  </ul>
+          <div className="flex-1 overflow-y-auto mb-6">
+            {summary && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold text-sidebar-foreground uppercase tracking-wide mb-2">Current Project</p>
+                <div className="px-3 py-3 bg-sidebar-accent rounded-lg transition-all duration-150 hover:shadow-md">
+                  <p className="text-xs text-sidebar-accent-foreground line-clamp-3">
+                    {summary.rawNotes.slice(0, 80)}...
+                  </p>
+                  <div className="flex items-center gap-4 mt-3 text-xs text-sidebar-foreground">
+                    <span className="flex items-center gap-1">
+                      <CheckCircle2 className="h-3 w-3" />
+                      {summary.goals.length} goals
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {tasks.length} tasks
+                    </span>
+                  </div>
                 </div>
+              </div>
+            )}
+          </div>
 
-                <div>
-                  <h3 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4" />
-                    Requirements
-                  </h3>
-                  <ul className="space-y-2">
-                    {summary.requirements.map((req, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="text-primary mt-1">•</span>
-                        <span className="text-sm">{req}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+          <div className="space-y-3 pt-6 border-t border-sidebar-border">
+            {/* Gamification Progress */}
+            <div className="px-3 py-3 bg-sidebar-accent/50 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-medium text-sidebar-foreground">Progress</span>
+                <span className="text-xs font-bold text-sidebar-primary">{gamificationProgress}%</span>
+              </div>
+              <div className="h-2 bg-sidebar-background rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-sidebar-primary transition-all duration-500 ease-out rounded-full"
+                  style={{ width: `${gamificationProgress}%` }}
+                />
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                {getGamificationIcon()}
+                <span className="text-xs text-sidebar-foreground">{getGamificationLabel()}</span>
+              </div>
+            </div>
 
-                <div>
-                  <h3 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    Deadlines
-                  </h3>
-                  <ul className="space-y-2">
-                    {summary.deadlines.map((deadline, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <span className="text-primary mt-1">•</span>
-                        <span className="text-sm">{deadline}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+            <Button
+              variant="ghost"
+              className="w-full justify-start transition-all duration-150 hover:bg-sidebar-accent"
+              onClick={() => setShowSettings(true)}
+            >
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </Button>
 
-                {tasks.length === 0 && (
-                  <Button
-                    onClick={handleGenerateTasks}
-                    disabled={loadingTasks}
-                    className="w-full"
-                  >
-                    {loadingTasks ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating Tasks...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="mr-2 h-4 w-4" />
-                        Generate Tasks
-                      </>
-                    )}
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          )}
+            <Button
+              variant="ghost"
+              className="w-full justify-start transition-all duration-150 hover:bg-sidebar-accent"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            >
+              {theme === 'dark' ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </Button>
+          </div>
+        </aside>
 
-          {/* Tasks Section */}
-          {tasks.length > 0 && (
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <CheckCircle2 className="h-5 w-5" />
-                  Tasks
-                </CardTitle>
-                <CardDescription>Click tasks to update status</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {tasks.map((task) => (
-                    <div
-                      key={task.id}
-                      onClick={() => toggleTaskStatus(task.id)}
-                      className="p-4 border rounded-lg hover:shadow-md transition-all duration-150 cursor-pointer group"
+        {/* Main Content */}
+        <main className="ml-[260px] p-8 min-h-screen">
+          <div className="max-w-6xl mx-auto space-y-6">
+            {/* Summary Card */}
+            {summary ? (
+              <Card className="shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-2xl">
+                    <Target className="h-6 w-6 text-primary" />
+                    Summary
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div>
+                    <h3 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4" />
+                      Goals
+                    </h3>
+                    <ul className="space-y-2">
+                      {summary.goals.map((goal, idx) => (
+                        <li key={idx} className="flex items-start gap-3 group">
+                          <Circle className="h-4 w-4 text-primary mt-0.5 group-hover:fill-primary transition-all duration-150" />
+                          <span className="text-sm leading-relaxed">{goal}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center gap-2">
+                      <AlertCircle className="h-4 w-4" />
+                      Requirements
+                    </h3>
+                    <ul className="space-y-2">
+                      {summary.requirements.map((req, idx) => (
+                        <li key={idx} className="flex items-start gap-3 group">
+                          <Circle className="h-4 w-4 text-primary mt-0.5 group-hover:fill-primary transition-all duration-150" />
+                          <span className="text-sm leading-relaxed">{req}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      Deadlines
+                    </h3>
+                    <ul className="space-y-2">
+                      {summary.deadlines.map((deadline, idx) => (
+                        <li key={idx} className="flex items-start gap-3 group">
+                          <Circle className="h-4 w-4 text-primary mt-0.5 group-hover:fill-primary transition-all duration-150" />
+                          <span className="text-sm leading-relaxed">{deadline}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {tasks.length === 0 && (
+                    <Button
+                      onClick={handleGenerateTasks}
+                      disabled={loadingTasks}
+                      className="w-full transition-all duration-150 hover:scale-[1.02] active:scale-98"
+                      size="lg"
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="mt-1">
-                          {task.status === 'done' ? (
-                            <CheckCircle2 className="h-5 w-5 text-green-600" />
-                          ) : task.status === 'in-progress' ? (
-                            <Clock className="h-5 w-5 text-blue-600 animate-pulse" />
-                          ) : (
-                            <div className="h-5 w-5 border-2 rounded-full border-muted-foreground/30 group-hover:border-primary transition-colors" />
-                          )}
-                        </div>
-                        <div className="flex-1">
-                          <h4 className={`font-medium mb-1 ${task.status === 'done' ? 'line-through text-muted-foreground' : ''}`}>
-                            {task.title}
-                          </h4>
-                          <p className="text-sm text-muted-foreground mb-2">{task.description}</p>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className={`text-xs px-2 py-1 rounded-full ${getPriorityColor(task.priority)}`}>
-                              {task.priority}
-                            </span>
-                            <span className="text-xs text-muted-foreground flex items-center gap-1">
-                              <Clock className="h-3 w-3" />
-                              {task.estimatedTime}
-                            </span>
+                      {loadingTasks ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generating Tasks...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Generate Tasks
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            ) : (
+              <Card className="shadow-lg">
+                <CardContent className="py-12 text-center">
+                  <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-lg font-medium text-muted-foreground mb-2">No project yet</p>
+                  <p className="text-sm text-muted-foreground mb-4">Upload notes to begin</p>
+                  <Button onClick={handleNewProject}>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Start New Project
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Tasks Section */}
+            {tasks.length > 0 && (
+              <Card className="shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2 text-2xl">
+                      <CheckCircle2 className="h-6 w-6 text-primary" />
+                      Tasks
+                    </CardTitle>
+                    <div className="text-sm text-muted-foreground">
+                      {tasks.filter(t => t.status === 'done').length} / {tasks.length} completed
+                    </div>
+                  </div>
+                  <CardDescription>Click tasks to update status</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {tasks.map((task) => (
+                      <div
+                        key={task.id}
+                        onClick={() => toggleTaskStatus(task.id)}
+                        className={`p-4 border rounded-xl hover:shadow-md transition-all duration-150 cursor-pointer group ${
+                          task.status === 'done' ? 'bg-accent/30' : 'hover:bg-accent/10'
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="mt-1 transition-transform duration-150 group-hover:scale-110">
+                            {task.status === 'done' ? (
+                              <CheckCircle className="h-5 w-5 text-green-600 fill-green-600" />
+                            ) : task.status === 'in-progress' ? (
+                              <Clock className="h-5 w-5 text-blue-600" />
+                            ) : (
+                              <Circle className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <h4 className={`font-medium mb-1 transition-all duration-150 ${
+                              task.status === 'done' ? 'line-through text-muted-foreground' : 'group-hover:text-primary'
+                            }`}>
+                              {task.title}
+                            </h4>
+                            <p className="text-sm text-muted-foreground mb-2 leading-relaxed">{task.description}</p>
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getPriorityColor(task.priority)}`}>
+                                {task.priority}
+                              </span>
+                              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {task.estimatedTime}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
 
-                {timeline.length === 0 && (
-                  <Button
-                    onClick={handleGenerateTimeline}
-                    disabled={loadingTimeline}
-                    className="w-full mt-4"
-                  >
-                    {loadingTimeline ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Generating Timeline...
-                      </>
-                    ) : (
-                      <>
-                        <Calendar className="mr-2 h-4 w-4" />
-                        Generate Timeline
-                      </>
-                    )}
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          )}
+                  {timeline.length === 0 && (
+                    <Button
+                      onClick={handleGenerateTimeline}
+                      disabled={loadingTimeline}
+                      className="w-full mt-4 transition-all duration-150 hover:scale-[1.02] active:scale-98"
+                      size="lg"
+                    >
+                      {loadingTimeline ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Generating Timeline...
+                        </>
+                      ) : (
+                        <>
+                          <Calendar className="mr-2 h-4 w-4" />
+                          Generate Timeline
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            )}
 
-          {/* Timeline Section */}
-          {timeline.length > 0 && (
-            <Card className="shadow-lg hover:shadow-xl transition-shadow duration-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  Timeline
-                </CardTitle>
-                <CardDescription>Your day-wise schedule</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {timeline.map((day, idx) => (
-                    <div key={idx} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                      <div className="flex items-center justify-between mb-3">
-                        <h3 className="font-semibold text-lg">{day.day}</h3>
-                        <span className="text-sm text-muted-foreground">{day.date}</span>
+            {/* Timeline Section */}
+            {timeline.length > 0 && (
+              <Card className="shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-2xl">
+                    <Calendar className="h-6 w-6 text-primary" />
+                    Timeline
+                  </CardTitle>
+                  <CardDescription>Your day-wise schedule</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {timeline.map((day, idx) => (
+                      <div key={idx} className="border rounded-xl p-5 hover:shadow-md transition-all duration-150 bg-card hover:bg-accent/5">
+                        <div className="flex items-center justify-between mb-3">
+                          <h3 className="font-semibold text-lg">{day.day}</h3>
+                          {day.date && <span className="text-sm text-muted-foreground">{day.date}</span>}
+                        </div>
+                        <p className="text-sm text-muted-foreground mb-4 italic">{day.focus}</p>
+                        <div className="space-y-2">
+                          {day.tasks.map((taskId) => {
+                            const task = tasks.find(t => t.id === taskId)
+                            if (!task) return null
+                            return (
+                              <div key={taskId} className="flex items-center gap-2 text-sm py-1">
+                                <Check className="h-4 w-4 text-primary flex-shrink-0" />
+                                <span className="flex-1">{task.title}</span>
+                                <span className="text-muted-foreground text-xs">({task.estimatedTime})</span>
+                              </div>
+                            )
+                          })}
+                        </div>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-3 italic">{day.focus}</p>
-                      <div className="space-y-2">
-                        {day.tasks.map((taskId) => {
-                          const task = tasks.find(t => t.id === taskId)
-                          if (!task) return null
-                          return (
-                            <div key={taskId} className="flex items-center gap-2 text-sm">
-                              <Check className="h-4 w-4 text-primary" />
-                              <span>{task.title}</span>
-                              <span className="text-muted-foreground">({task.estimatedTime})</span>
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </main>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+        </main>
+      </div>
 
       {/* Floating Chat Button */}
-      <button
-        onClick={() => setShowChat(true)}
-        className="fixed bottom-8 right-8 h-14 w-14 bg-primary text-primary-foreground rounded-full shadow-2xl hover:scale-110 transition-transform duration-200 flex items-center justify-center"
-      >
-        <MessageCircle className="h-6 w-6" />
-      </button>
+      {summary && (
+        <button
+          onClick={() => setShowChat(true)}
+          className="fixed bottom-8 right-8 h-14 w-14 bg-primary text-primary-foreground rounded-full shadow-2xl hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center z-40"
+          aria-label="Open chat"
+        >
+          <MessageCircle className="h-6 w-6" />
+        </button>
+      )}
 
       {/* Chat Panel */}
       {showChat && (
         <div className="fixed inset-y-0 right-0 w-96 bg-card border-l border-border shadow-2xl flex flex-col animate-slide-in-right z-50">
-          <div className="p-4 border-b border-border flex items-center justify-between">
+          <div className="p-4 border-b border-border flex items-center justify-between bg-sidebar-background">
             <h2 className="font-semibold flex items-center gap-2">
-              <MessageCircle className="h-5 w-5" />
+              <MessageCircle className="h-5 w-5 text-primary" />
               Chat Copilot
             </h2>
-            <Button variant="ghost" size="icon" onClick={() => setShowChat(false)}>
+            <Button variant="ghost" size="icon" onClick={() => setShowChat(false)} className="hover:bg-sidebar-accent">
               <X className="h-4 w-4" />
             </Button>
           </div>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {chatMessages.length === 0 && (
+              <div className="text-center py-12 text-muted-foreground">
+                <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                <p className="text-sm">Chat with Copilot to refine your plan</p>
+              </div>
+            )}
             {chatMessages.map((msg, idx) => (
-              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] rounded-lg p-3 ${
+              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
+                <div className={`max-w-[80%] rounded-xl p-3 ${
                   msg.role === 'user'
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted'
                 }`}>
-                  <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                  <p className="text-sm whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                   {msg.tip && (
                     <div className="mt-2 pt-2 border-t border-border/20">
                       <p className="text-xs italic opacity-80">{msg.tip}</p>
@@ -743,8 +874,8 @@ export default function Home() {
               </div>
             ))}
             {loadingChat && (
-              <div className="flex justify-start">
-                <div className="bg-muted rounded-lg p-3">
+              <div className="flex justify-start animate-fade-in">
+                <div className="bg-muted rounded-xl p-3">
                   <Loader2 className="h-4 w-4 animate-spin" />
                 </div>
               </div>
@@ -752,32 +883,41 @@ export default function Home() {
             <div ref={chatEndRef} />
           </div>
 
-          <div className="p-4 border-t border-border">
+          <div className="p-4 border-t border-border bg-sidebar-background">
             <div className="flex gap-2">
               <Input
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleChatSend()}
+                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && handleChatSend()}
                 placeholder="Ask a question..."
                 className="flex-1"
               />
-              <Button onClick={handleChatSend} disabled={!chatInput.trim() || loadingChat}>
-                <MessageCircle className="h-4 w-4" />
+              <Button
+                onClick={handleChatSend}
+                disabled={!chatInput.trim() || loadingChat}
+                className="transition-all duration-150 hover:scale-105 active:scale-95"
+              >
+                <Send className="h-4 w-4" />
               </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Settings Modal */}
+      {/* Settings Drawer */}
       {showSettings && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => setShowSettings(false)}>
-          <Card className="w-full max-w-2xl" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm" onClick={() => setShowSettings(false)}>
+          <Card className="w-full max-w-2xl animate-fade-in" onClick={(e) => e.stopPropagation()}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Settings className="h-5 w-5" />
-                Settings
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <Settings className="h-6 w-6 text-primary" />
+                  Settings
+                </CardTitle>
+                <Button variant="ghost" size="icon" onClick={() => setShowSettings(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
@@ -790,8 +930,8 @@ export default function Home() {
                     <button
                       key={t}
                       onClick={() => setTheme(t)}
-                      className={`p-4 border-2 rounded-lg capitalize transition-all ${
-                        theme === t ? 'border-primary shadow-md scale-105' : 'border-border hover:border-primary/50'
+                      className={`p-4 border-2 rounded-xl capitalize transition-all duration-150 hover:scale-105 active:scale-95 ${
+                        theme === t ? 'border-primary shadow-lg scale-105 bg-primary/5' : 'border-border hover:border-primary/50'
                       }`}
                     >
                       {t}
@@ -812,8 +952,8 @@ export default function Home() {
                     <button
                       key={mode}
                       onClick={() => setGamificationMode(mode)}
-                      className={`p-4 border-2 rounded-lg transition-all flex items-center gap-2 ${
-                        gamificationMode === mode ? 'border-primary shadow-md scale-105' : 'border-border hover:border-primary/50'
+                      className={`p-4 border-2 rounded-xl transition-all duration-150 flex items-center gap-2 hover:scale-105 active:scale-95 ${
+                        gamificationMode === mode ? 'border-primary shadow-lg scale-105 bg-primary/5' : 'border-border hover:border-primary/50'
                       }`}
                     >
                       <Icon className="h-5 w-5" />
@@ -825,15 +965,14 @@ export default function Home() {
 
               <div>
                 <h3 className="font-semibold mb-3">Focus Session</h3>
-                <Button onClick={() => { setShowFocusSession(true); setShowSettings(false) }} className="w-full">
+                <Button
+                  onClick={() => { setShowFocusSession(true); setShowSettings(false) }}
+                  className="w-full transition-all duration-150 hover:scale-[1.02] active:scale-98"
+                >
                   <Play className="mr-2 h-4 w-4" />
                   Start Focus Session
                 </Button>
               </div>
-
-              <Button variant="outline" onClick={() => setShowSettings(false)} className="w-full">
-                Close
-              </Button>
             </CardContent>
           </Card>
         </div>
@@ -841,13 +980,20 @@ export default function Home() {
 
       {/* Focus Session Modal */}
       {showFocusSession && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50" onClick={() => !focusActive && setShowFocusSession(false)}>
-          <Card className="w-full max-w-md" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 backdrop-blur-sm" onClick={() => !focusActive && setShowFocusSession(false)}>
+          <Card className="w-full max-w-md animate-fade-in" onClick={(e) => e.stopPropagation()}>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Focus Session
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <Clock className="h-6 w-6 text-primary" />
+                  Focus Session
+                </CardTitle>
+                {!focusActive && (
+                  <Button variant="ghost" size="icon" onClick={() => setShowFocusSession(false)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="space-y-6">
               {!focusActive ? (
@@ -870,7 +1016,10 @@ export default function Home() {
                       placeholder="What will you work on?"
                     />
                   </div>
-                  <Button onClick={startFocusSession} className="w-full">
+                  <Button
+                    onClick={startFocusSession}
+                    className="w-full transition-all duration-150 hover:scale-[1.02] active:scale-98"
+                  >
                     <Play className="mr-2 h-4 w-4" />
                     Start Session
                   </Button>
@@ -878,13 +1027,13 @@ export default function Home() {
               ) : (
                 <>
                   <div className="text-center">
-                    <div className="text-6xl font-bold mb-4">{formatTime(focusTimeLeft)}</div>
+                    <div className="text-6xl font-bold mb-4 tabular-nums">{formatTime(focusTimeLeft)}</div>
                     <p className="text-muted-foreground">{focusGoal || 'Focus mode active'}</p>
                   </div>
                   <Button
                     onClick={() => { setFocusActive(false); setFocusTimeLeft(0) }}
                     variant="outline"
-                    className="w-full"
+                    className="w-full transition-all duration-150 hover:scale-[1.02] active:scale-98"
                   >
                     <Pause className="mr-2 h-4 w-4" />
                     End Session
