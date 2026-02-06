@@ -178,15 +178,19 @@ export default function Home() {
   }, [chatMessages])
 
   // Handlers
-  const handleFileSelect = async (files: FileList | null) => {
+  const handleFileSelect = (files: FileList | null) => {
     if (!files || files.length === 0) return
-
     const fileArray = Array.from(files)
     setSelectedFiles(fileArray)
+  }
+
+  const handleFileUpload = async () => {
+    if (selectedFiles.length === 0) return
+
     setLoadingSummary(true)
 
     try {
-      const uploadResult = await uploadFiles(fileArray)
+      const uploadResult = await uploadFiles(selectedFiles)
       if (uploadResult.success && uploadResult.asset_ids.length > 0) {
         const result = await callAIAgent(
           'Extract goals, requirements, and deadlines from this document',
@@ -435,7 +439,9 @@ export default function Home() {
                     onDrop={(e) => {
                       e.preventDefault()
                       setIsDragging(false)
-                      handleFileSelect(e.dataTransfer.files)
+                      if (e.dataTransfer.files) {
+                        handleFileSelect(e.dataTransfer.files)
+                      }
                     }}
                     onClick={() => fileInputRef.current?.click()}
                   >
@@ -465,12 +471,12 @@ export default function Home() {
                   </div>
                   {selectedFiles.length > 0 && !loadingSummary && (
                     <Button
-                      onClick={() => handleFileSelect(new DataTransfer().files)}
+                      onClick={handleFileUpload}
                       className="w-full mt-4"
                       size="lg"
                     >
                       <Sparkles className="mr-2 h-4 w-4" />
-                      Generate Summary
+                      Analyze Files
                     </Button>
                   )}
                 </div>
