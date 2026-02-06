@@ -185,27 +185,44 @@ export default function Home() {
   }
 
   const handleFileUpload = async () => {
-    if (selectedFiles.length === 0) return
+    console.log('🔍 handleFileUpload called with files:', selectedFiles)
 
+    if (selectedFiles.length === 0) {
+      console.log('❌ No files selected, returning')
+      return
+    }
+
+    console.log('✅ Setting loading state to true')
     setLoadingSummary(true)
 
     try {
+      console.log('📤 Uploading files...')
       const uploadResult = await uploadFiles(selectedFiles)
+      console.log('📥 Upload result:', uploadResult)
+
       if (uploadResult.success && uploadResult.asset_ids.length > 0) {
+        console.log('🤖 Calling AI agent with asset_ids:', uploadResult.asset_ids)
         const result = await callAIAgent(
           'Extract goals, requirements, and deadlines from this document',
           AGENTS.SUMMARY,
           { assets: uploadResult.asset_ids }
         )
+        console.log('🤖 Agent result:', result)
 
         if (result.success && result.response.status === 'success') {
+          console.log('✅ Setting summary and changing view to dashboard')
           setSummary(result.response.result as SummaryResult)
           setView('dashboard')
+        } else {
+          console.error('❌ Agent call failed:', result)
         }
+      } else {
+        console.error('❌ Upload failed or no asset IDs:', uploadResult)
       }
     } catch (error) {
-      console.error('Upload error:', error)
+      console.error('❌ Upload error:', error)
     } finally {
+      console.log('🔄 Setting loading state to false')
       setLoadingSummary(false)
       setSelectedFiles([])
     }
@@ -471,7 +488,10 @@ export default function Home() {
                   </div>
                   {selectedFiles.length > 0 && !loadingSummary && (
                     <Button
-                      onClick={handleFileUpload}
+                      onClick={() => {
+                        console.log('🔘 Analyze Files button clicked!')
+                        handleFileUpload()
+                      }}
                       className="w-full mt-4"
                       size="lg"
                     >
