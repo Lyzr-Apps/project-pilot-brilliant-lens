@@ -526,10 +526,10 @@ export default function Home() {
   // Dashboard View
   return (
     <div className="min-h-screen bg-background transition-colors duration-200">
-      <div className="grid grid-cols-[260px_1fr]">
+      <div className="flex">
         {/* Sidebar */}
-        <aside className="fixed left-0 top-0 h-screen w-[260px] bg-sidebar-background border-r border-sidebar-border p-6 flex flex-col">
-          <div className="mb-8">
+        <aside className="fixed left-0 top-0 h-screen w-[260px] bg-sidebar-background border-r border-sidebar-border flex flex-col overflow-hidden">
+          <div className="p-6 pb-4">
             <div className="flex items-center gap-2 mb-2">
               <div className="p-2 bg-sidebar-primary/10 rounded-lg">
                 <Target className="h-5 w-5 text-sidebar-primary" />
@@ -539,29 +539,31 @@ export default function Home() {
             <p className="text-xs text-sidebar-foreground">Your Curriculum, Clarified</p>
           </div>
 
-          <Button
-            className="mb-6 w-full transition-all duration-150 hover:scale-[1.02] active:scale-98"
-            onClick={handleNewProject}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            New Project
-          </Button>
+          <div className="px-6 pb-4">
+            <Button
+              className="w-full transition-all duration-150 hover:scale-[1.02] active:scale-98"
+              onClick={handleNewProject}
+            >
+              <Plus className="mr-2 h-4 w-4" />
+              New Project
+            </Button>
+          </div>
 
-          <div className="flex-1 overflow-y-auto mb-6">
+          <div className="flex-1 overflow-y-auto px-6 py-2">
             {summary && (
-              <div className="space-y-2">
-                <p className="text-xs font-semibold text-sidebar-foreground uppercase tracking-wide mb-2">Current Project</p>
-                <div className="px-3 py-3 bg-sidebar-accent rounded-lg transition-all duration-150 hover:shadow-md">
-                  <p className="text-xs text-sidebar-accent-foreground line-clamp-3">
+              <div className="space-y-3">
+                <p className="text-xs font-semibold text-sidebar-foreground uppercase tracking-wide">Current Project</p>
+                <div className="px-4 py-4 bg-sidebar-accent rounded-lg transition-all duration-150 hover:shadow-md">
+                  <p className="text-xs text-sidebar-accent-foreground line-clamp-3 leading-relaxed mb-3">
                     {summary.rawNotes.slice(0, 80)}...
                   </p>
-                  <div className="flex items-center gap-4 mt-3 text-xs text-sidebar-foreground">
-                    <span className="flex items-center gap-1">
-                      <CheckCircle2 className="h-3 w-3" />
+                  <div className="flex items-center gap-4 text-xs text-sidebar-foreground">
+                    <span className="flex items-center gap-1.5">
+                      <CheckCircle2 className="h-3 w-3 flex-shrink-0" />
                       {summary.goals.length} goals
                     </span>
-                    <span className="flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="h-3 w-3 flex-shrink-0" />
                       {tasks.length} tasks
                     </span>
                   </div>
@@ -570,7 +572,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="space-y-3 pt-6 border-t border-sidebar-border">
+          <div className="px-6 pt-6 pb-6 border-t border-sidebar-border space-y-3">
             {/* Gamification Progress */}
             <div className="px-3 py-3 bg-sidebar-accent/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
@@ -610,8 +612,8 @@ export default function Home() {
         </aside>
 
         {/* Main Content */}
-        <main className="ml-[260px] p-8 min-h-screen">
-          <div className="max-w-6xl mx-auto space-y-6">
+        <main className="ml-[260px] min-h-screen w-[calc(100%-260px)]">
+          <div className="max-w-5xl mx-auto px-8 py-8 space-y-8">
             {/* Summary Card */}
             {summary ? (
               <Card className="shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
@@ -621,47 +623,47 @@ export default function Home() {
                     Summary
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-8">
                   <div>
-                    <h3 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center gap-2">
+                    <h3 className="font-semibold text-sm text-muted-foreground mb-4 flex items-center gap-2 uppercase tracking-wide">
                       <CheckCircle2 className="h-4 w-4" />
                       Goals
                     </h3>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {summary.goals.map((goal, idx) => (
                         <li key={idx} className="flex items-start gap-3 group">
-                          <Circle className="h-4 w-4 text-primary mt-0.5 group-hover:fill-primary transition-all duration-150" />
-                          <span className="text-sm leading-relaxed">{goal}</span>
+                          <Circle className="h-4 w-4 text-primary mt-1 flex-shrink-0 group-hover:fill-primary transition-all duration-150" />
+                          <span className="text-sm leading-relaxed flex-1">{goal}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center gap-2">
+                    <h3 className="font-semibold text-sm text-muted-foreground mb-4 flex items-center gap-2 uppercase tracking-wide">
                       <AlertCircle className="h-4 w-4" />
                       Requirements
                     </h3>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {summary.requirements.map((req, idx) => (
                         <li key={idx} className="flex items-start gap-3 group">
-                          <Circle className="h-4 w-4 text-primary mt-0.5 group-hover:fill-primary transition-all duration-150" />
-                          <span className="text-sm leading-relaxed">{req}</span>
+                          <Circle className="h-4 w-4 text-primary mt-1 flex-shrink-0 group-hover:fill-primary transition-all duration-150" />
+                          <span className="text-sm leading-relaxed flex-1">{req}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
 
                   <div>
-                    <h3 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center gap-2">
+                    <h3 className="font-semibold text-sm text-muted-foreground mb-4 flex items-center gap-2 uppercase tracking-wide">
                       <Calendar className="h-4 w-4" />
                       Deadlines
                     </h3>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {summary.deadlines.map((deadline, idx) => (
                         <li key={idx} className="flex items-start gap-3 group">
-                          <Circle className="h-4 w-4 text-primary mt-0.5 group-hover:fill-primary transition-all duration-150" />
-                          <span className="text-sm leading-relaxed">{deadline}</span>
+                          <Circle className="h-4 w-4 text-primary mt-1 flex-shrink-0 group-hover:fill-primary transition-all duration-150" />
+                          <span className="text-sm leading-relaxed flex-1">{deadline}</span>
                         </li>
                       ))}
                     </ul>
@@ -691,11 +693,11 @@ export default function Home() {
               </Card>
             ) : (
               <Card className="shadow-lg">
-                <CardContent className="py-12 text-center">
-                  <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-lg font-medium text-muted-foreground mb-2">No project yet</p>
-                  <p className="text-sm text-muted-foreground mb-4">Upload notes to begin</p>
-                  <Button onClick={handleNewProject}>
+                <CardContent className="py-16 text-center">
+                  <Upload className="h-16 w-16 text-muted-foreground mx-auto mb-6 opacity-50" />
+                  <p className="text-lg font-medium text-foreground mb-2">No project yet</p>
+                  <p className="text-sm text-muted-foreground mb-6">Upload notes to begin</p>
+                  <Button onClick={handleNewProject} size="lg">
                     <Plus className="mr-2 h-4 w-4" />
                     Start New Project
                   </Button>
@@ -707,29 +709,31 @@ export default function Home() {
             {tasks.length > 0 && (
               <Card className="shadow-lg hover:shadow-xl transition-all duration-200 animate-fade-in">
                 <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="flex items-center gap-2 text-2xl">
-                      <CheckCircle2 className="h-6 w-6 text-primary" />
-                      Tasks
-                    </CardTitle>
-                    <div className="text-sm text-muted-foreground">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1">
+                      <CardTitle className="flex items-center gap-2 text-2xl mb-2">
+                        <CheckCircle2 className="h-6 w-6 text-primary" />
+                        Tasks
+                      </CardTitle>
+                      <CardDescription>Click tasks to update status</CardDescription>
+                    </div>
+                    <div className="text-sm text-muted-foreground mt-1">
                       {tasks.filter(t => t.status === 'done').length} / {tasks.length} completed
                     </div>
                   </div>
-                  <CardDescription>Click tasks to update status</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     {tasks.map((task) => (
                       <div
                         key={task.id}
                         onClick={() => toggleTaskStatus(task.id)}
-                        className={`p-4 border rounded-xl hover:shadow-md transition-all duration-150 cursor-pointer group ${
+                        className={`p-5 border rounded-xl hover:shadow-md transition-all duration-150 cursor-pointer group ${
                           task.status === 'done' ? 'bg-accent/30' : 'hover:bg-accent/10'
                         }`}
                       >
-                        <div className="flex items-start gap-3">
-                          <div className="mt-1 transition-transform duration-150 group-hover:scale-110">
+                        <div className="flex items-start gap-4">
+                          <div className="mt-0.5 transition-transform duration-150 group-hover:scale-110 flex-shrink-0">
                             {task.status === 'done' ? (
                               <CheckCircle className="h-5 w-5 text-green-600 fill-green-600" />
                             ) : task.status === 'in-progress' ? (
@@ -738,18 +742,18 @@ export default function Home() {
                               <Circle className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
                             )}
                           </div>
-                          <div className="flex-1">
-                            <h4 className={`font-medium mb-1 transition-all duration-150 ${
+                          <div className="flex-1 min-w-0">
+                            <h4 className={`font-medium mb-2 transition-all duration-150 ${
                               task.status === 'done' ? 'line-through text-muted-foreground' : 'group-hover:text-primary'
                             }`}>
                               {task.title}
                             </h4>
-                            <p className="text-sm text-muted-foreground mb-2 leading-relaxed">{task.description}</p>
-                            <div className="flex items-center gap-2 flex-wrap">
+                            <p className="text-sm text-muted-foreground mb-3 leading-relaxed">{task.description}</p>
+                            <div className="flex items-center gap-3 flex-wrap">
                               <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${getPriorityColor(task.priority)}`}>
                                 {task.priority}
                               </span>
-                              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                              <span className="text-xs text-muted-foreground flex items-center gap-1.5">
                                 <Clock className="h-3 w-3" />
                                 {task.estimatedTime}
                               </span>
@@ -794,31 +798,29 @@ export default function Home() {
                   </CardTitle>
                   <CardDescription>Your day-wise schedule</CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {timeline.map((day, idx) => (
-                      <div key={idx} className="border rounded-xl p-5 hover:shadow-md transition-all duration-150 bg-card hover:bg-accent/5">
-                        <div className="flex items-center justify-between mb-3">
-                          <h3 className="font-semibold text-lg">{day.day}</h3>
-                          {day.date && <span className="text-sm text-muted-foreground">{day.date}</span>}
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-4 italic">{day.focus}</p>
-                        <div className="space-y-2">
-                          {day.tasks.map((taskId) => {
-                            const task = tasks.find(t => t.id === taskId)
-                            if (!task) return null
-                            return (
-                              <div key={taskId} className="flex items-center gap-2 text-sm py-1">
-                                <Check className="h-4 w-4 text-primary flex-shrink-0" />
-                                <span className="flex-1">{task.title}</span>
-                                <span className="text-muted-foreground text-xs">({task.estimatedTime})</span>
-                              </div>
-                            )
-                          })}
-                        </div>
+                <CardContent className="space-y-4">
+                  {timeline.map((day, idx) => (
+                    <div key={idx} className="border rounded-xl p-6 hover:shadow-md transition-all duration-150 bg-card hover:bg-accent/5">
+                      <div className="flex items-start justify-between mb-4">
+                        <h3 className="font-semibold text-lg">{day.day}</h3>
+                        {day.date && <span className="text-sm text-muted-foreground mt-0.5">{day.date}</span>}
                       </div>
-                    ))}
-                  </div>
+                      <p className="text-sm text-muted-foreground mb-4 leading-relaxed italic">{day.focus}</p>
+                      <div className="space-y-2.5">
+                        {day.tasks.map((taskId) => {
+                          const task = tasks.find(t => t.id === taskId)
+                          if (!task) return null
+                          return (
+                            <div key={taskId} className="flex items-start gap-3 text-sm">
+                              <Check className="h-4 w-4 text-primary flex-shrink-0 mt-0.5" />
+                              <span className="flex-1 leading-relaxed">{task.title}</span>
+                              <span className="text-muted-foreground text-xs flex-shrink-0 mt-0.5">({task.estimatedTime})</span>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  ))}
                 </CardContent>
               </Card>
             )}
@@ -840,8 +842,8 @@ export default function Home() {
       {/* Chat Panel */}
       {showChat && (
         <div className="fixed inset-y-0 right-0 w-96 bg-card border-l border-border shadow-2xl flex flex-col animate-slide-in-right z-50">
-          <div className="p-4 border-b border-border flex items-center justify-between bg-sidebar-background">
-            <h2 className="font-semibold flex items-center gap-2">
+          <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-sidebar-background">
+            <h2 className="font-semibold text-lg flex items-center gap-2">
               <MessageCircle className="h-5 w-5 text-primary" />
               Chat Copilot
             </h2>
@@ -850,7 +852,7 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
             {chatMessages.length === 0 && (
               <div className="text-center py-12 text-muted-foreground">
                 <MessageCircle className="h-12 w-12 mx-auto mb-3 opacity-50" />
@@ -883,8 +885,8 @@ export default function Home() {
             <div ref={chatEndRef} />
           </div>
 
-          <div className="p-4 border-t border-border bg-sidebar-background">
-            <div className="flex gap-2">
+          <div className="px-6 py-4 border-t border-border bg-sidebar-background">
+            <div className="flex gap-3">
               <Input
                 value={chatInput}
                 onChange={(e) => setChatInput(e.target.value)}
@@ -896,6 +898,7 @@ export default function Home() {
                 onClick={handleChatSend}
                 disabled={!chatInput.trim() || loadingChat}
                 className="transition-all duration-150 hover:scale-105 active:scale-95"
+                size="icon"
               >
                 <Send className="h-4 w-4" />
               </Button>
