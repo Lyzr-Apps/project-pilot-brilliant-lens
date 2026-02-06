@@ -104,12 +104,12 @@ export async function callAIAgent(
  * Upload files via server-side API route
  */
 export async function uploadFiles(files: File | File[]): Promise<UploadResponse> {
-  console.log('📁 uploadFiles called with:', files)
+  console.log('uploadFiles called with:', files)
   const fileArray = Array.isArray(files) ? files : [files]
-  console.log('📁 File array:', fileArray)
+  console.log('File array:', fileArray)
 
   if (fileArray.length === 0) {
-    console.log('❌ No files in array')
+    console.log('No files in array')
     return {
       success: false,
       asset_ids: [],
@@ -126,22 +126,22 @@ export async function uploadFiles(files: File | File[]): Promise<UploadResponse>
   try {
     const formData = new FormData()
     for (const file of fileArray) {
-      console.log('📎 Appending file to FormData:', file.name, file.type, file.size)
+      console.log('Appending file to FormData:', file.name, file.type, file.size)
       formData.append('files', file, file.name)
     }
 
-    console.log('🌐 Fetching /api/upload...')
+    console.log('Fetching /api/upload...')
     const response = await fetch('/api/upload', {
       method: 'POST',
       body: formData,
     })
 
-    console.log('🌐 Upload API response status:', response.status)
+    console.log('Upload API response status:', response.status)
     const data = await response.json()
-    console.log('🌐 Upload API response data:', data)
+    console.log('Upload API response data:', data)
     return data
   } catch (error) {
-    console.error('❌ Upload network error:', error)
+    console.error('Upload network error:', error)
     return {
       success: false,
       asset_ids: [],
