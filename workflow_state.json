@@ -1,0 +1,31 @@
+{
+  "workflow_created": true,
+  "agents": {
+    "summary_agent": {
+      "agent_id": "69858c4bfe576c19864be7ab",
+      "name": "Summary Agent",
+      "status": "created",
+      "schema_file": "response_schemas/summary_agent_response.json"
+    },
+    "task_agent": {
+      "agent_id": "69858c5ca791e6e318b8dee2",
+      "name": "Task Agent",
+      "status": "created",
+      "schema_file": "response_schemas/task_agent_response.json"
+    },
+    "planning_agent": {
+      "agent_id": "69858c72c613a65b3c419476",
+      "name": "Planning Agent",
+      "status": "created",
+      "schema_file": "response_schemas/planning_agent_response.json"
+    },
+    "chat_copilot_agent": {
+      "agent_id": "69858c892237a2c55706b069",
+      "name": "Chat Copilot Agent",
+      "status": "created",
+      "schema_file": "response_schemas/chat_copilot_agent_response.json"
+    }
+  },
+  "created_at": "2026-02-06T00:00:00.000Z",
+  "total_agents": 4
+}

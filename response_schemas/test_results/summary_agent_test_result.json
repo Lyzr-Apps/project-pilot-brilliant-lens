@@ -1,0 +1,36 @@
+{
+  "agent_name": "Summary Agent",
+  "agent_id": "69858c4bfe576c19864be7ab",
+  "test_message": "I need to complete my Computer Science project by March 15th. The project involves building a web application with React and Node.js. Requirements: user authentication, database integration with MongoDB, RESTful API, and responsive design. Goals: Learn full-stack development, understand authentication patterns, deploy to cloud platform. Also need to study for Data Structures exam on March 20th covering trees, graphs, and dynamic programming.",
+  "expected_purpose": "Extracts key goals, requirements, and deadlines from uploaded notes",
+  "timestamp": "2026-02-06T06:40:28.797094",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "goals": [
+        "Learn full-stack development",
+        "Understand authentication patterns",
+        "Deploy the web application to a cloud platform"
+      ],
+      "requirements": [
+        "Build a web application using React and Node.js",
+        "Implement user authentication",
+        "Integrate a database using MongoDB",
+        "Develop a RESTful API",
+        "Ensure responsive design"
+      ],
+      "deadlines": [
+        "Complete Computer Science project by March 15th",
+        "Data Structures exam on March 20th (covering trees, graphs, and dynamic programming)"
+      ],
+      "rawNotes": "I need to complete my Computer Science project by March 15th. The project involves building a web application with React and Node.js. Requirements: user authentication, database integration with MongoDB, RESTful API, and responsive design. Goals: Learn full-stack development, understand authentication patterns, deploy to cloud platform. Also need to study for Data Structures exam on March 20th covering trees, graphs, and dynamic programming."
+    },
+    "metadata": {
+      "agent_name": "Summary Agent",
+      "timestamp": "2024-06-11T11:02:35Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"goals\": [\n      \"Learn full-stack development\",\n      \"Understand authentication patterns\",\n      \"Deploy the web application to a cloud platform\"\n    ],\n    \"requirements\": [\n      \"Build a web application using React and Node.js\",\n      \"Implement user authentication\",\n      \"Integrate a database using MongoDB\",\n      \"Develop a RESTful API\",\n      \"Ensure responsive design\"\n    ],\n    \"deadlines\": [\n      \"Complete Computer Science project by March 15th\",\n      \"Data Structures exam on March 20th (covering trees, graphs, and dynamic programming)\"\n    ],\n    \"rawNotes\": \"I need to complete my Computer Science project by March 15th. The project involves building a web application with React and Node.js. Requirements: user authentication, database integration with MongoDB, RESTful API, and responsive design. Goals: Learn full-stack development, understand authentication patterns, deploy to cloud platform. Also need to study for Data Structures exam on March 20th covering trees, graphs, and dynamic programming.\"\n  },\n  \"metadata\": {\n    \"agent_name\": \"Summary Agent\",\n    \"timestamp\": \"2024-06-11T11:02:35Z\"\n  }\n}"
+}

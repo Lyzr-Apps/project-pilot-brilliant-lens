@@ -1,0 +1,38 @@
+{
+  "agent_name": "Planning Agent",
+  "agent_id": "69858c72c613a65b3c419476",
+  "test_message": "{\"tasks\": [{\"id\": \"t1\", \"title\": \"Set up project structure\", \"description\": \"Initialize React and Node.js projects\", \"priority\": \"high\", \"estimatedTime\": \"2 hours\", \"status\": \"todo\"}, {\"id\": \"t2\", \"title\": \"Implement authentication\", \"description\": \"Set up JWT authentication system\", \"priority\": \"high\", \"estimatedTime\": \"4 hours\", \"status\": \"todo\"}, {\"id\": \"t3\", \"title\": \"Database setup\", \"description\": \"Configure MongoDB connection\", \"priority\": \"medium\", \"estimatedTime\": \"3 hours\", \"status\": \"todo\"}]}",
+  "expected_purpose": "Creates day-wise schedule from approved tasks",
+  "timestamp": "2026-02-06T06:40:59.061135",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "timeline": [
+        {
+          "day": "Day 1",
+          "date": "2026-02-07",
+          "tasks": [
+            "t1",
+            "t2"
+          ],
+          "focus": "Laying the foundation by initializing project structure and implementing core authentication."
+        },
+        {
+          "day": "Day 2",
+          "date": "2026-02-08",
+          "tasks": [
+            "t3"
+          ],
+          "focus": "Configuring database connectivity to support backend development."
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Planning Agent",
+      "timestamp": "2026-02-07T09:00:00Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"timeline\": [\n      {\n        \"day\": \"Day 1\",\n        \"date\": \"2026-02-07\",\n        \"tasks\": [\"t1\", \"t2\"],\n        \"focus\": \"Laying the foundation by initializing project structure and implementing core authentication.\"\n      },\n      {\n        \"day\": \"Day 2\",\n        \"date\": \"2026-02-08\",\n        \"tasks\": [\"t3\"],\n        \"focus\": \"Configuring database connectivity to support backend development.\"\n      }\n    ]\n  },\n  \"metadata\": {\n    \"agent_name\": \"Planning Agent\",\n    \"timestamp\": \"2026-02-07T09:00:00Z\"\n  }\n}"
+}

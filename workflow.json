@@ -1,0 +1,142 @@
+{
+  "workflow_name": "KLARIS Project Planning Workflow",
+  "pattern": "Multiple Independent Agents (UI-Orchestrated Sequential Pipeline)",
+  "description": "AI-powered project planning system with sequential processing through Summary, Task, and Planning agents, plus an independent Chat Copilot for assistance",
+  "nodes": [
+    {
+      "id": "input_node",
+      "type": "Input",
+      "label": "User Input",
+      "nodeCategory": "input",
+      "description": "User uploads notes and provides project context"
+    },
+    {
+      "id": "summary_agent",
+      "type": "Agent",
+      "label": "Summary Agent",
+      "nodeCategory": "agent",
+      "agent_id": "69858c4bfe576c19864be7ab",
+      "description": "Extracts key goals, requirements, and deadlines from uploaded notes",
+      "trigger": "Generate Summary on Upload Screen",
+      "response_schema_file": "response_schemas/summary_agent_response.json"
+    },
+    {
+      "id": "task_agent",
+      "type": "Agent",
+      "label": "Task Agent",
+      "nodeCategory": "agent",
+      "agent_id": "69858c5ca791e6e318b8dee2",
+      "description": "Generates actionable tasks with priorities and time estimates",
+      "trigger": "Generate Tasks on Summary Review",
+      "response_schema_file": "response_schemas/task_agent_response.json"
+    },
+    {
+      "id": "planning_agent",
+      "type": "Agent",
+      "label": "Planning Agent",
+      "nodeCategory": "agent",
+      "agent_id": "69858c72c613a65b3c419476",
+      "description": "Creates day-wise schedule from approved tasks",
+      "trigger": "Generate Timeline on Tasks Review",
+      "response_schema_file": "response_schemas/planning_agent_response.json"
+    },
+    {
+      "id": "chat_copilot_agent",
+      "type": "Agent",
+      "label": "Chat Copilot Agent",
+      "nodeCategory": "agent",
+      "agent_id": "69858c892237a2c55706b069",
+      "description": "Conversational assistant accessible throughout the workflow",
+      "trigger": "Chat button (floating) / Start Session",
+      "response_schema_file": "response_schemas/chat_copilot_agent_response.json",
+      "independent": true
+    },
+    {
+      "id": "output_node",
+      "type": "Output",
+      "label": "Output",
+      "nodeCategory": "end",
+      "description": "Complete project plan with timeline"
+    }
+  ],
+  "edges": [
+    {
+      "source": "input_node",
+      "target": "summary_agent",
+      "label": "User notes"
+    },
+    {
+      "source": "summary_agent",
+      "target": "task_agent",
+      "label": "Summary output"
+    },
+    {
+      "source": "task_agent",
+      "target": "planning_agent",
+      "label": "Tasks output"
+    },
+    {
+      "source": "planning_agent",
+      "target": "output_node",
+      "label": "Timeline output"
+    }
+  ],
+  "agents": {
+    "summary_agent": {
+      "agent_id": "69858c4bfe576c19864be7ab",
+      "name": "Summary Agent",
+      "role": "Information Extraction Specialist",
+      "provider": "OpenAI",
+      "model": "gpt-4.1",
+      "temperature": 0.3,
+      "top_p": 1,
+      "output_format": {
+        "goals": "string[]",
+        "requirements": "string[]",
+        "deadlines": "string[]",
+        "rawNotes": "string"
+      }
+    },
+    "task_agent": {
+      "agent_id": "69858c5ca791e6e318b8dee2",
+      "name": "Task Agent",
+      "role": "Task Generation Specialist",
+      "provider": "OpenAI",
+      "model": "gpt-4.1",
+      "temperature": 0.4,
+      "top_p": 1,
+      "output_format": {
+        "tasks": "array of {id, title, description, priority, estimatedTime, status}"
+      }
+    },
+    "planning_agent": {
+      "agent_id": "69858c72c613a65b3c419476",
+      "name": "Planning Agent",
+      "role": "Schedule Planning Specialist",
+      "provider": "OpenAI",
+      "model": "gpt-4.1",
+      "temperature": 0.4,
+      "top_p": 1,
+      "output_format": {
+        "timeline": "array of {day, date, tasks[], focus}"
+      }
+    },
+    "chat_copilot_agent": {
+      "agent_id": "69858c892237a2c55706b069",
+      "name": "Chat Copilot Agent",
+      "role": "Conversational Project Assistant",
+      "provider": "OpenAI",
+      "model": "gpt-4.1",
+      "temperature": 0.5,
+      "top_p": 0.95,
+      "output_format": {
+        "response": "string",
+        "modifications": "array of {type, targetId, changes}",
+        "studyTip": "string (optional)"
+      }
+    }
+  },
+  "execution_flow": "sequential",
+  "orchestration": "UI-controlled",
+  "created_at": "2026-02-06T00:00:00.000Z"
+}

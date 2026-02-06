@@ -6,8 +6,8 @@ import { IframeLoggerInit } from '@/components/IframeLoggerInit'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Next.js App',
-  description: 'Built with Next.js, React, and Tailwind CSS',
+  title: 'KLARIS - Your Curriculum, Clarified',
+  description: 'AI-powered curriculum organizer with task generation, timeline planning, and focus sessions',
 }
 
 export default function RootLayout({

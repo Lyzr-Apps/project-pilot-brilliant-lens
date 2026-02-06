@@ -1,0 +1,81 @@
+{
+  "agent_name": "Summary Agent",
+  "agent_id": "69858c4bfe576c19864be7ab",
+  "agent_purpose": "summary_extraction",
+  "description": "Extracts key goals, requirements, and deadlines from uploaded notes; returns concise bullet points organized by category",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "goals": [
+        "string"
+      ],
+      "requirements": [
+        "string"
+      ],
+      "deadlines": [
+        "string"
+      ],
+      "rawNotes": "string"
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "goals": [
+        "Learn full-stack development",
+        "Understand authentication patterns",
+        "Deploy the web application to a cloud platform"
+      ],
+      "requirements": [
+        "Build a web application using React and Node.js",
+        "Implement user authentication",
+        "Integrate a database using MongoDB",
+        "Develop a RESTful API",
+        "Ensure responsive design"
+      ],
+      "deadlines": [
+        "Complete Computer Science project by March 15th",
+        "Data Structures exam on March 20th (covering trees, graphs, and dynamic programming)"
+      ],
+      "rawNotes": "I need to complete my Computer Science project by March 15th. The project involves building a web application with React and Node.js. Requirements: user authentication, database integration with MongoDB, RESTful API, and responsive design. Goals: Learn full-stack development, understand authentication patterns, deploy to cloud platform. Also need to study for Data Structures exam on March 20th covering trees, graphs, and dynamic programming."
+    },
+    "metadata": {
+      "agent_name": "Summary Agent",
+      "timestamp": "2024-06-11T11:02:35Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T06:40:28.797665",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "goals": [
+        "Learn full-stack development",
+        "Understand authentication patterns",
+        "Deploy the web application to a cloud platform"
+      ],
+      "requirements": [
+        "Build a web application using React and Node.js",
+        "Implement user authentication",
+        "Integrate a database using MongoDB",
+        "Develop a RESTful API",
+        "Ensure responsive design"
+      ],
+      "deadlines": [
+        "Complete Computer Science project by March 15th",
+        "Data Structures exam on March 20th (covering trees, graphs, and dynamic programming)"
+      ],
+      "rawNotes": "I need to complete my Computer Science project by March 15th. The project involves building a web application with React and Node.js. Requirements: user authentication, database integration with MongoDB, RESTful API, and responsive design. Goals: Learn full-stack development, understand authentication patterns, deploy to cloud platform. Also need to study for Data Structures exam on March 20th covering trees, graphs, and dynamic programming."
+    },
+    "metadata": {
+      "agent_name": "Summary Agent",
+      "timestamp": "2024-06-11T11:02:35Z"
+    }
+  },
+  "test_passed": true
+}

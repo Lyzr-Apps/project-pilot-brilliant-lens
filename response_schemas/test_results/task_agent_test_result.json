@@ -1,0 +1,101 @@
+{
+  "agent_name": "Task Agent",
+  "agent_id": "69858c5ca791e6e318b8dee2",
+  "test_message": "{\"summary\": {\"goals\": [\"Learn full-stack development\", \"Understand authentication patterns\", \"Deploy to cloud platform\"], \"requirements\": [\"User authentication\", \"Database integration with MongoDB\", \"RESTful API\", \"Responsive design\"], \"deadlines\": [\"Computer Science project due March 15th\", \"Data Structures exam on March 20th\"]}, \"notes\": \"Computer Science web app project with React/Node\"}",
+  "expected_purpose": "Generates actionable tasks with title, description, priority, and estimated time",
+  "timestamp": "2026-02-06T06:40:49.535093",
+  "is_valid_json": true,
+  "validation_errors": [],
+  "actual_response": {
+    "status": "success",
+    "result": {
+      "tasks": [
+        {
+          "id": "task_1",
+          "title": "Review full-stack development concepts",
+          "description": "Study the fundamentals of full-stack development, focusing on React (frontend) and Node.js (backend) to prepare for the project.",
+          "priority": "high",
+          "estimatedTime": "3 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_2",
+          "title": "Design database schema for MongoDB integration",
+          "description": "Plan and document the database structure to support user authentication and app data, ensuring seamless integration with MongoDB.",
+          "priority": "high",
+          "estimatedTime": "2 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_3",
+          "title": "Set up RESTful API using Node.js",
+          "description": "Develop the backend API endpoints to handle requests between frontend and database, implementing CRUD operations as required.",
+          "priority": "high",
+          "estimatedTime": "4 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_4",
+          "title": "Implement user authentication system",
+          "description": "Build secure authentication with signup, login, and protected routes, utilizing industry-standard best practices.",
+          "priority": "high",
+          "estimatedTime": "3 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_5",
+          "title": "Develop responsive UI in React",
+          "description": "Create a user interface with React that adapts to various devices and screen sizes, ensuring a smooth user experience.",
+          "priority": "medium",
+          "estimatedTime": "4 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_6",
+          "title": "Test full app functionality",
+          "description": "Verify that authentication, API, and database integration function as expected. Address bugs and edge cases.",
+          "priority": "high",
+          "estimatedTime": "3 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_7",
+          "title": "Deploy web app to cloud platform",
+          "description": "Set up and configure deployment to a cloud service (e.g., Heroku, AWS, or Vercel) ensuring environment variables and production readiness.",
+          "priority": "high",
+          "estimatedTime": "2 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_8",
+          "title": "Document the project and setup steps",
+          "description": "Write clear documentation for setup, usage, and features, including authentication and deployment instructions.",
+          "priority": "medium",
+          "estimatedTime": "1.5 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_9",
+          "title": "Review Computer Science project requirements",
+          "description": "Double-check that the web app meets all computer science project specifications and prepare it for the March 15th deadline.",
+          "priority": "high",
+          "estimatedTime": "1 hour",
+          "status": "todo"
+        },
+        {
+          "id": "task_10",
+          "title": "Study for Data Structures exam",
+          "description": "Allocate focused study time to prepare for the Data Structures exam on March 20th.",
+          "priority": "high",
+          "estimatedTime": "4 hours",
+          "status": "todo"
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Task Agent",
+      "timestamp": "2024-06-13T12:00:00Z"
+    }
+  },
+  "raw_response": "{\n  \"status\": \"success\",\n  \"result\": {\n    \"tasks\": [\n      {\n        \"id\": \"task_1\",\n        \"title\": \"Review full-stack development concepts\",\n        \"description\": \"Study the fundamentals of full-stack development, focusing on React (frontend) and Node.js (backend) to prepare for the project.\",\n        \"priority\": \"high\",\n        \"estimatedTime\": \"3 hours\",\n        \"status\": \"todo\"\n      },\n      {\n        \"id\": \"task_2\",\n        \"title\": \"Design database schema for MongoDB integration\",\n        \"description\": \"Plan and document the database structure to support user authentication and app data, ensuring seamless integration with MongoDB.\",\n        \"priority\": \"high\",\n        \"estimatedTime\": \"2 hours\",\n        \"status\": \"todo\"\n      },\n      {\n        \"id\": \"task_3\",\n        \"title\": \"Set up RESTful API using Node.js\",\n        \"description\": \"Develop the backend API endpoints to handle requests between frontend and database, implementing CRUD operations as required.\",\n        \"priority\": \"high\",\n        \"estimatedTime\": \"4 hours\",\n        \"status\": \"todo\"\n      },\n      {\n        \"id\": \"task_4\",\n        \"title\": \"Implement user authentication system\",\n        \"description\": \"Build secure authentication with signup, login, and protected routes, utilizing industry-standard best practices.\",\n        \"priority\": \"high\",\n        \"estimatedTime\": \"3 hours\",\n        \"status\": \"todo\"\n      },\n      {\n        \"id\": \"task_5\",\n        \"title\": \"Develop responsive UI in React\",\n        \"description\": \"Create a user interface with React that adapts to various devices and screen sizes, ensuring a smooth user experience.\",\n        \"priority\": \"medium\",\n        \"estimatedTime\": \"4 hours\",\n        \"status\": \"todo\"\n      },\n      {\n        \"id\": \"task_6\",\n        \"title\": \"Test full app functionality\",\n        \"description\": \"Verify that authentication, API, and database integration function as expected. Address bugs and edge cases.\",\n        \"priority\": \"high\",\n        \"estimatedTime\": \"3 hours\",\n        \"status\": \"todo\"\n      },\n      {\n        \"id\": \"task_7\",\n        \"title\": \"Deploy web app to cloud platform\",\n        \"description\": \"Set up and configure deployment to a cloud service (e.g., Heroku, AWS, or Vercel) ensuring environment variables and production readiness.\",\n        \"priority\": \"high\",\n        \"estimatedTime\": \"2 hours\",\n        \"status\": \"todo\"\n      },\n      {\n        \"id\": \"task_8\",\n        \"title\": \"Document the project and setup steps\",\n        \"description\": \"Write clear documentation for setup, usage, and features, including authentication and deployment instructions.\",\n        \"priority\": \"medium\",\n        \"estimatedTime\": \"1.5 hours\",\n        \"status\": \"todo\"\n      },\n      {\n        \"id\": \"task_9\",\n        \"title\": \"Review Computer Science project requirements\",\n        \"description\": \"Double-check that the web app meets all computer science project specifications and prepare it for the March 15th deadline.\",\n        \"priority\": \"high\",\n        \"estimatedTime\": \"1 hour\",\n        \"status\": \"todo\"\n      },\n      {\n        \"id\": \"task_10\",\n        \"title\": \"Study for Data Structures exam\",\n        \"description\": \"Allocate focused study time to prepare for the Data Structures exam on March 20th.\",\n        \"priority\": \"high\",\n        \"estimatedTime\": \"4 hours\",\n        \"status\": \"todo\"\n      }\n    ]\n  },\n  \"metadata\": {\n    \"agent_name\": \"Task Agent\",\n    \"timestamp\": \"2024-06-13T12:00:00Z\"\n  }\n}"
+}

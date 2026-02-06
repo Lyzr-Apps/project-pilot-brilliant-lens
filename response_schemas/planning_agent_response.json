@@ -1,0 +1,85 @@
+{
+  "agent_name": "Planning Agent",
+  "agent_id": "69858c72c613a65b3c419476",
+  "agent_purpose": "timeline_planning",
+  "description": "Creates day-wise schedule from approved tasks, considering priorities, time estimates, and user working patterns",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "timeline": [
+        {
+          "day": "string",
+          "date": "string",
+          "tasks": [
+            "string"
+          ],
+          "focus": "string"
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "timeline": [
+        {
+          "day": "Day 1",
+          "date": "2026-02-07",
+          "tasks": [
+            "t1",
+            "t2"
+          ],
+          "focus": "Laying the foundation by initializing project structure and implementing core authentication."
+        },
+        {
+          "day": "Day 2",
+          "date": "2026-02-08",
+          "tasks": [
+            "t3"
+          ],
+          "focus": "Configuring database connectivity to support backend development."
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Planning Agent",
+      "timestamp": "2026-02-07T09:00:00Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T06:40:59.061803",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "timeline": [
+        {
+          "day": "Day 1",
+          "date": "2026-02-07",
+          "tasks": [
+            "t1",
+            "t2"
+          ],
+          "focus": "Laying the foundation by initializing project structure and implementing core authentication."
+        },
+        {
+          "day": "Day 2",
+          "date": "2026-02-08",
+          "tasks": [
+            "t3"
+          ],
+          "focus": "Configuring database connectivity to support backend development."
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Planning Agent",
+      "timestamp": "2026-02-07T09:00:00Z"
+    }
+  },
+  "test_passed": true
+}

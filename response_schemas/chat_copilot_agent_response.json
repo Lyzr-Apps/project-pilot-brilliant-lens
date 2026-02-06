@@ -1,0 +1,48 @@
+{
+  "agent_name": "Chat Copilot Agent",
+  "agent_id": "69858c892237a2c55706b069",
+  "agent_purpose": "chat_assistance",
+  "description": "Conversational assistant that answers project questions, modifies plans with highlighted changes, provides study tips, explains AI reasoning, and conducts Focus Session check-ins",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "response": "string",
+      "modifications": [
+        "any"
+      ],
+      "studyTip": "string"
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "response": "Absolutely, breaking down the authentication task into smaller, actionable steps is a great way to approach it. Here\u2019s a suggested breakdown:\n\n1. Research authentication methods (password, OAuth, biometrics, etc.) and select the one that fits your project best.\n2. Set up user data storage (e.g., a database for user credentials).\n3. Design the registration process (input validation, storing credentials securely).\n4. Implement the login process (checking credentials, handling errors).\n5. Set up session management (using cookies, tokens, or sessions).\n6. Add security measures (password hashing, SSL, brute-force protection).\n7. Test authentication workflows for edge cases and vulnerabilities.\n\nWould you like these as individual tasks in your plan? If so, I can add them for you!",
+      "modifications": [],
+      "studyTip": "Breaking large tasks into smaller pieces can reduce overwhelm and help you track progress more easily. Tackle one subtask at a time!"
+    },
+    "metadata": {
+      "agent_name": "Chat Copilot Agent",
+      "timestamp": "2024-06-08T21:10:16Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T06:41:07.998648",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "response": "Absolutely, breaking down the authentication task into smaller, actionable steps is a great way to approach it. Here\u2019s a suggested breakdown:\n\n1. Research authentication methods (password, OAuth, biometrics, etc.) and select the one that fits your project best.\n2. Set up user data storage (e.g., a database for user credentials).\n3. Design the registration process (input validation, storing credentials securely).\n4. Implement the login process (checking credentials, handling errors).\n5. Set up session management (using cookies, tokens, or sessions).\n6. Add security measures (password hashing, SSL, brute-force protection).\n7. Test authentication workflows for edge cases and vulnerabilities.\n\nWould you like these as individual tasks in your plan? If so, I can add them for you!",
+      "modifications": [],
+      "studyTip": "Breaking large tasks into smaller pieces can reduce overwhelm and help you track progress more easily. Tackle one subtask at a time!"
+    },
+    "metadata": {
+      "agent_name": "Chat Copilot Agent",
+      "timestamp": "2024-06-08T21:10:16Z"
+    }
+  },
+  "test_passed": true
+}

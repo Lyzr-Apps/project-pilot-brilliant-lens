@@ -1,0 +1,211 @@
+{
+  "agent_name": "Task Agent",
+  "agent_id": "69858c5ca791e6e318b8dee2",
+  "agent_purpose": "task_generation",
+  "description": "Generates actionable tasks with title, short description, priority level, and estimated time based on approved summary",
+  "response_schema": {
+    "status": "string",
+    "result": {
+      "tasks": [
+        {
+          "id": "string",
+          "title": "string",
+          "description": "string",
+          "priority": "string",
+          "estimatedTime": "string",
+          "status": "string"
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "string",
+      "timestamp": "string"
+    }
+  },
+  "example_response": {
+    "status": "success",
+    "result": {
+      "tasks": [
+        {
+          "id": "task_1",
+          "title": "Review full-stack development concepts",
+          "description": "Study the fundamentals of full-stack development, focusing on React (frontend) and Node.js (backend) to prepare for the project.",
+          "priority": "high",
+          "estimatedTime": "3 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_2",
+          "title": "Design database schema for MongoDB integration",
+          "description": "Plan and document the database structure to support user authentication and app data, ensuring seamless integration with MongoDB.",
+          "priority": "high",
+          "estimatedTime": "2 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_3",
+          "title": "Set up RESTful API using Node.js",
+          "description": "Develop the backend API endpoints to handle requests between frontend and database, implementing CRUD operations as required.",
+          "priority": "high",
+          "estimatedTime": "4 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_4",
+          "title": "Implement user authentication system",
+          "description": "Build secure authentication with signup, login, and protected routes, utilizing industry-standard best practices.",
+          "priority": "high",
+          "estimatedTime": "3 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_5",
+          "title": "Develop responsive UI in React",
+          "description": "Create a user interface with React that adapts to various devices and screen sizes, ensuring a smooth user experience.",
+          "priority": "medium",
+          "estimatedTime": "4 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_6",
+          "title": "Test full app functionality",
+          "description": "Verify that authentication, API, and database integration function as expected. Address bugs and edge cases.",
+          "priority": "high",
+          "estimatedTime": "3 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_7",
+          "title": "Deploy web app to cloud platform",
+          "description": "Set up and configure deployment to a cloud service (e.g., Heroku, AWS, or Vercel) ensuring environment variables and production readiness.",
+          "priority": "high",
+          "estimatedTime": "2 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_8",
+          "title": "Document the project and setup steps",
+          "description": "Write clear documentation for setup, usage, and features, including authentication and deployment instructions.",
+          "priority": "medium",
+          "estimatedTime": "1.5 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_9",
+          "title": "Review Computer Science project requirements",
+          "description": "Double-check that the web app meets all computer science project specifications and prepare it for the March 15th deadline.",
+          "priority": "high",
+          "estimatedTime": "1 hour",
+          "status": "todo"
+        },
+        {
+          "id": "task_10",
+          "title": "Study for Data Structures exam",
+          "description": "Allocate focused study time to prepare for the Data Structures exam on March 20th.",
+          "priority": "high",
+          "estimatedTime": "4 hours",
+          "status": "todo"
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Task Agent",
+      "timestamp": "2024-06-13T12:00:00Z"
+    }
+  },
+  "is_actual_tested": true,
+  "test_timestamp": "2026-02-06T06:40:49.535903",
+  "test_message_used": "Hello, provide a sample response",
+  "actual_test_response": {
+    "status": "success",
+    "result": {
+      "tasks": [
+        {
+          "id": "task_1",
+          "title": "Review full-stack development concepts",
+          "description": "Study the fundamentals of full-stack development, focusing on React (frontend) and Node.js (backend) to prepare for the project.",
+          "priority": "high",
+          "estimatedTime": "3 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_2",
+          "title": "Design database schema for MongoDB integration",
+          "description": "Plan and document the database structure to support user authentication and app data, ensuring seamless integration with MongoDB.",
+          "priority": "high",
+          "estimatedTime": "2 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_3",
+          "title": "Set up RESTful API using Node.js",
+          "description": "Develop the backend API endpoints to handle requests between frontend and database, implementing CRUD operations as required.",
+          "priority": "high",
+          "estimatedTime": "4 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_4",
+          "title": "Implement user authentication system",
+          "description": "Build secure authentication with signup, login, and protected routes, utilizing industry-standard best practices.",
+          "priority": "high",
+          "estimatedTime": "3 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_5",
+          "title": "Develop responsive UI in React",
+          "description": "Create a user interface with React that adapts to various devices and screen sizes, ensuring a smooth user experience.",
+          "priority": "medium",
+          "estimatedTime": "4 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_6",
+          "title": "Test full app functionality",
+          "description": "Verify that authentication, API, and database integration function as expected. Address bugs and edge cases.",
+          "priority": "high",
+          "estimatedTime": "3 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_7",
+          "title": "Deploy web app to cloud platform",
+          "description": "Set up and configure deployment to a cloud service (e.g., Heroku, AWS, or Vercel) ensuring environment variables and production readiness.",
+          "priority": "high",
+          "estimatedTime": "2 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_8",
+          "title": "Document the project and setup steps",
+          "description": "Write clear documentation for setup, usage, and features, including authentication and deployment instructions.",
+          "priority": "medium",
+          "estimatedTime": "1.5 hours",
+          "status": "todo"
+        },
+        {
+          "id": "task_9",
+          "title": "Review Computer Science project requirements",
+          "description": "Double-check that the web app meets all computer science project specifications and prepare it for the March 15th deadline.",
+          "priority": "high",
+          "estimatedTime": "1 hour",
+          "status": "todo"
+        },
+        {
+          "id": "task_10",
+          "title": "Study for Data Structures exam",
+          "description": "Allocate focused study time to prepare for the Data Structures exam on March 20th.",
+          "priority": "high",
+          "estimatedTime": "4 hours",
+          "status": "todo"
+        }
+      ]
+    },
+    "metadata": {
+      "agent_name": "Task Agent",
+      "timestamp": "2024-06-13T12:00:00Z"
+    }
+  },
+  "test_passed": true
+}
